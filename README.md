@@ -23,6 +23,23 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
+## On-device food detection
+
+NutriLens runs `assets/best.tflite` locally on Android using
+`react-native-fast-tflite`. The model is loaded once when the home screen
+starts. Captured photos are decoded and letterboxed to 416 × 416 with RGB
+values normalized to 0–1, then arranged as a Float32 NCHW tensor.
+
+The postprocessor expects the model's `[1, 51, 3549]` output: four normalized
+`xywh` box values and 47 class scores per candidate. It applies a 0.25
+confidence threshold and class-aware non-maximum suppression. The class order
+is defined in `src/utils/yoloPostprocessing.ts`.
+
+To build and launch the Android development app on a connected device, run
+`npx expo run:android` from the `NutriLens` project folder in the VS Code
+terminal. After the native app is built, `npx expo start --dev-client` starts
+the JavaScript development server.
+
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 ## Get a fresh project
